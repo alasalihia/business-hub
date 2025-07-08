@@ -35,7 +35,7 @@
             <h1 class="text-3xl font-bold text-slate-800">القائمة الرئيسية</h1>
             <div id="main-menu-user-info" class="flex items-center">
                 <span id="main-menu-user-display-name" class="font-semibold ml-4 text-slate-600"></span>
-                <button onclick="signOutUser()" class="text-sm text-red-600 hover:underline mr-2">تسجيل الخروج</button>
+                <button id="logout-button" class="text-sm text-red-600 hover:underline mr-2">تسجيل الخروج</button>
             </div>
         </header>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -78,6 +78,8 @@
         const mainMenuScreen = document.getElementById('main-menu-screen');
         const mainAppContainer = document.getElementById('main-app-container');
         const userDisplayName = document.getElementById('main-menu-user-display-name');
+        const loginButton = document.getElementById('login-button');
+        const logoutButton = document.getElementById('logout-button');
 
         onAuthStateChanged(window.auth, user => {
             if (user) {
@@ -96,7 +98,7 @@
             }
         });
 
-        window.signInWithGoogle = async () => {
+        const signInWithGoogle = async () => {
             const provider = new GoogleAuthProvider();
             try { await signInWithPopup(window.auth, provider); } catch (error) {
                 console.error("Authentication Error:", error);
@@ -104,12 +106,15 @@
             }
         };
 
-        window.signOutUser = async () => {
+        const signOutUser = async () => {
             try { await signOut(window.auth); } catch (error) {
                 console.error("Sign Out Error:", error);
                 alert("فشلت عملية تسجيل الخروج.");
             }
         };
+
+        loginButton.addEventListener('click', signInWithGoogle);
+        logoutButton.addEventListener('click', signOutUser);
 
         window.loadModule = async (htmlFile, jsFile) => {
             try {
