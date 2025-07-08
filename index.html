@@ -12,21 +12,14 @@
         body { font-family: 'Cairo', sans-serif; background-color: #f1f5f9; }
         .module-card { transition: transform 0.2s, box-shadow 0.2s; }
         .module-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
-        #main-app-container, #main-menu-screen, #login-screen {
-            display: none; /* All sections are hidden by default */
-        }
-        #main-app-container.active, #main-menu-screen.active, #login-screen.active {
-            display: block;
-        }
-        #login-screen.active {
-            display: flex;
-        }
+        #main-app-container, #main-menu-screen, #login-screen { display: none; }
+        #main-app-container.active, #main-menu-screen.active, #login-screen.active { display: block; }
+        #login-screen.active { display: flex; }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800">
 
-    <!-- 1. Login Screen -->
-    <div id="login-screen" class="flex-col items-center justify-center p-8 min-h-screen">
+    <div id="login-screen" class="flex flex-col items-center justify-center p-8 min-h-screen">
         <div class="text-center bg-white p-12 rounded-2xl shadow-xl max-w-lg w-full mx-auto">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">منصة الإدارة المتكاملة</h1>
             <p class="text-slate-600 mb-8">يرجى تسجيل الدخول للوصول إلى أنظمة العمل.</p>
@@ -37,7 +30,6 @@
         </div>
     </div>
 
-    <!-- 2. Main Menu Screen -->
     <div id="main-menu-screen" class="min-h-screen p-8">
         <header class="flex justify-between items-center mb-12">
             <h1 class="text-3xl font-bold text-slate-800">القائمة الرئيسية</h1>
@@ -47,16 +39,14 @@
             </div>
         </header>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- HR Module Card -->
-            <div onclick="loadModule('hr.html')" class="module-card bg-white p-8 rounded-2xl shadow-lg text-center cursor-pointer">
+            <div onclick="loadModule('hr.html', './hr.js')" class="module-card bg-white p-8 rounded-2xl shadow-lg text-center cursor-pointer">
                 <div class="bg-violet-100 text-violet-600 rounded-full h-20 w-20 flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 </div>
                 <h3 class="text-2xl font-bold text-slate-800">نظام شؤون الموظفين</h3>
                 <p class="text-slate-500 mt-2">الرواتب، الإجازات، والتقارير.</p>
             </div>
-            <!-- Logistics Module Card -->
-            <div onclick="loadModule('logistics.html')" class="module-card bg-white p-8 rounded-2xl shadow-lg text-center cursor-pointer">
+            <div onclick="loadModule('logistics.html', './logistics.js')" class="module-card bg-white p-8 rounded-2xl shadow-lg text-center cursor-pointer">
                 <div class="bg-teal-100 text-teal-600 rounded-full h-20 w-20 flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
                 </div>
@@ -66,17 +56,12 @@
         </div>
     </div>
 
-    <!-- 3. Module Container -->
-    <div id="main-app-container">
-        <!-- The content of hr.html or logistics.html will be loaded here -->
-    </div>
+    <div id="main-app-container"></div>
 
     <script type="module">
-        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         
-        // Firebase configuration - This is the central config for the entire platform
         const firebaseConfig = {
             apiKey: "AIzaSyDSlxf95W00Ow6LZba8waAKJINptIRPkU8",
             authDomain: "sample-firebase-ai-app-960f4.firebaseapp.com",
@@ -86,81 +71,80 @@
             appId: "1:741880884079:web:8d62f6e233fb65e65e969a"
         };
 
-        // Global variables for Firebase services
         window.app = initializeApp(firebaseConfig);
         window.auth = getAuth(window.app);
 
-        // UI Elements
         const loginScreen = document.getElementById('login-screen');
         const mainMenuScreen = document.getElementById('main-menu-screen');
         const mainAppContainer = document.getElementById('main-app-container');
         const userDisplayName = document.getElementById('main-menu-user-display-name');
 
-        // Central Authentication Logic
         onAuthStateChanged(window.auth, user => {
             if (user) {
-                // User is signed in
                 loginScreen.classList.remove('active');
                 mainMenuScreen.classList.add('active');
                 mainAppContainer.classList.remove('active');
                 userDisplayName.textContent = user.displayName || user.email;
             } else {
-                // User is signed out
+                const oldScript = document.getElementById('module-script');
+                if (oldScript) oldScript.remove();
+                
                 loginScreen.classList.add('active');
                 mainMenuScreen.classList.remove('active');
                 mainAppContainer.classList.remove('active');
-                mainAppContainer.innerHTML = ''; // Clear any loaded module
+                mainAppContainer.innerHTML = '';
             }
         });
 
-        // Function to sign in
         window.signInWithGoogle = async () => {
             const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(window.auth, provider);
-            } catch (error) {
+            try { await signInWithPopup(window.auth, provider); } catch (error) {
                 console.error("Authentication Error:", error);
                 alert("فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.");
             }
         };
 
-        // Function to sign out
         window.signOutUser = async () => {
-            try {
-                await signOut(window.auth);
-            } catch (error) {
+            try { await signOut(window.auth); } catch (error) {
                 console.error("Sign Out Error:", error);
                 alert("فشلت عملية تسجيل الخروج.");
             }
         };
 
-        // Function to load a module dynamically
-        window.loadModule = async (moduleUrl) => {
+        window.loadModule = async (htmlFile, jsFile) => {
             try {
-                const response = await fetch(moduleUrl);
-                if (!response.ok) {
-                    throw new Error(`Failed to load module: ${response.statusText}`);
-                }
+                const response = await fetch(htmlFile);
+                if (!response.ok) throw new Error(`Failed to load ${htmlFile}`);
                 const moduleHtml = await response.text();
                 
                 mainMenuScreen.classList.remove('active');
                 mainAppContainer.innerHTML = moduleHtml;
                 mainAppContainer.classList.add('active');
+                
+                const oldScript = document.getElementById('module-script');
+                if (oldScript) oldScript.remove();
 
-                // The script inside the loaded HTML will execute automatically
+                const script = document.createElement('script');
+                script.id = 'module-script';
+                script.type = 'module';
+                script.src = jsFile;
+                document.body.appendChild(script);
+
             } catch (error) {
                 console.error("Error loading module:", error);
                 alert("حدث خطأ أثناء تحميل النظام. يرجى المحاولة مرة أخرى.");
             }
         };
 
-        // Function to return to the main menu from a module
         window.showMainMenu = () => {
+            const oldScript = document.getElementById('module-script');
+            if (oldScript) oldScript.remove();
             mainAppContainer.classList.remove('active');
             mainAppContainer.innerHTML = '';
             mainMenuScreen.classList.add('active');
         };
 
+        loginScreen.classList.add('active');
     </script>
 </body>
 </html>
