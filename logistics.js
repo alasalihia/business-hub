@@ -14,7 +14,27 @@ const root = document.getElementById('logistics-module-root');
 
 function initializeLogisticsModule() {
     console.log("Logistics Module Initialized");
-    // ... Add all event listeners and call the snapshot listener setup function here
+    
+    function setupLogisticsListeners() {
+        if (!userId) {
+            console.error("Logistics Module: User not authenticated.");
+            return;
+        }
+        
+        const companiesRef = collection(db, "inventory-data", userId, "companies");
+        onSnapshot(companiesRef, snapshot => {
+            logisticsApp.state.companies = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            if(logisticsApp.renderAll) logisticsApp.renderAll();
+        });
+        // ... all other onSnapshot listeners
+    }
+
+    logisticsApp.renderAll = () => {
+        // ... your complete renderAll logic
+        console.log("Rendering all logistics components...");
+    };
+
+    setupLogisticsListeners();
     // logisticsApp.showPage('page-layout');
 }
 
