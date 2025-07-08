@@ -97,7 +97,7 @@
 
         // Central navigation function
         window.showScreen = (screenId) => {
-            // **FIX:** Remove the dynamic script when leaving a module to prevent conflicts
+            // Remove the dynamic script when leaving a module to prevent conflicts
             const dynamicScript = document.getElementById('dynamic-module-script');
             if (dynamicScript) {
                 dynamicScript.remove();
@@ -131,7 +131,7 @@
 
         // Robust module loader
         window.loadModule = async (moduleUrl) => {
-            // **FIX:** First, remove any previous module script to prevent duplicates
+            // First, remove any previous module script to prevent duplicates
             const oldScript = document.getElementById('dynamic-module-script');
             if (oldScript) {
                 oldScript.remove();
@@ -144,12 +144,10 @@
                 }
                 const htmlText = await response.text();
                 
-                // Hide main screens and show the app container
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 mainAppContainer.innerHTML = htmlText;
                 mainAppContainer.classList.add('active');
 
-                // Find the main module script and re-create it to force execution
                 const moduleScript = mainAppContainer.querySelector('script[type="module"]');
                 if (moduleScript) {
                     const script = document.createElement('script');
@@ -157,10 +155,8 @@
                     script.id = 'dynamic-module-script'; // Add a unique ID for cleanup
                     script.textContent = moduleScript.textContent;
                     
-                    // Remove the original script from the loaded content
                     moduleScript.remove();
                     
-                    // Append the new, executable script to the body
                     document.body.appendChild(script);
                 }
             } catch (error) {
