@@ -1,41 +1,22 @@
-// This file contains all the JavaScript logic for the Logistics module.
-import { getFirestore, collection, doc, addDoc, onSnapshot, writeBatch, deleteDoc, updateDoc, runTransaction, setDoc, getDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+// This file contains all the JavaScript logic for the HR module.
+import { getFirestore, collection, doc, addDoc, onSnapshot, deleteDoc, query, where, getDocs, updateDoc, writeBatch, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-window.logisticsApp = {};
+window.hrApp = {};
 
 const db = getFirestore(window.app);
 const userId = window.auth.currentUser.uid;
 
-const root = document.getElementById('logistics-module-root');
+// The rest of your ENTIRE JavaScript code from the original hr.html file goes here,
+// with all functions and variables attached to the `hrApp` object.
+// I'll put a placeholder here, but you should copy your full script.
 
-// --- State, UI, and Functions for Logistics Module ---
-// NOTE: You need to copy ALL your functions and variables from the original logistics script here,
-// and namespace them under `logisticsApp`.
+hrApp.state = { /* ... */ };
+hrApp.renderAll = () => { /* ... */ };
+// ... etc.
 
-function initializeLogisticsModule() {
-    console.log("Logistics Module Initialized");
-    
-    function setupLogisticsListeners() {
-        if (!userId) {
-            console.error("Logistics Module: User not authenticated.");
-            return;
-        }
-        
-        const companiesRef = collection(db, "inventory-data", userId, "companies");
-        onSnapshot(companiesRef, snapshot => {
-            logisticsApp.state.companies = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            if(logisticsApp.renderAll) logisticsApp.renderAll();
-        });
-        // ... all other onSnapshot listeners
-    }
-
-    logisticsApp.renderAll = () => {
-        // ... your complete renderAll logic
-        console.log("Rendering all logistics components...");
-    };
-
-    setupLogisticsListeners();
-    // logisticsApp.showPage('page-layout');
+function initializeHrModule() {
+    console.log("HR Module Initialized");
+    // All your event listeners go here
 }
 
-initializeLogisticsModule();
+initializeHrModule();
