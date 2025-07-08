@@ -97,6 +97,12 @@
 
         // Central navigation function
         window.showScreen = (screenId) => {
+            // **FIX:** Remove the dynamic script when leaving a module to prevent conflicts
+            const dynamicScript = document.getElementById('dynamic-module-script');
+            if (dynamicScript) {
+                dynamicScript.remove();
+            }
+
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             mainAppContainer.classList.remove('active');
             mainAppContainer.innerHTML = ''; // Clear container when showing a main screen
@@ -125,6 +131,12 @@
 
         // Robust module loader
         window.loadModule = async (moduleUrl) => {
+            // **FIX:** First, remove any previous module script to prevent duplicates
+            const oldScript = document.getElementById('dynamic-module-script');
+            if (oldScript) {
+                oldScript.remove();
+            }
+
             try {
                 const response = await fetch(moduleUrl);
                 if (!response.ok) {
@@ -142,10 +154,13 @@
                 if (moduleScript) {
                     const script = document.createElement('script');
                     script.type = 'module';
+                    script.id = 'dynamic-module-script'; // Add a unique ID for cleanup
                     script.textContent = moduleScript.textContent;
-                    // Remove the old, non-executed script from the DOM
+                    
+                    // Remove the original script from the loaded content
                     moduleScript.remove();
-                    // Append the new, executable script
+                    
+                    // Append the new, executable script to the body
                     document.body.appendChild(script);
                 }
             } catch (error) {
